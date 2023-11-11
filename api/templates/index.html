@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facial Paralysis Detection</title>
+</head>
+<body>
+    <h1>Facial Paralysis Detection</h1>
+    
+    <!-- Image input form --> 
+    <form id="imageForm" enctype="multipart/form-data">
+        <input type="file" id="imageInput" accept="image/*" />
+        <button type="button" onclick="predict()">Predict</button>
+    </form>
+
+    <!-- Display the selected image -->
+    <div id="imageContainer">
+        <img id="selectedImage" style="max-width: 100%;" />
+    </div>
+
+    <!-- Display the prediction results -->
+    <div id="predictionResults">
+        <h2>Prediction Results</h2>
+        <p id="predictedClass">Predicted Class: </p>
+        <p id="predictedProb">Probability: </p>
+    </div>
+
+    <!-- JavaScript to handle image input and prediction -->
+    <script>
+        function predict() {
+            var inputElement = document.getElementById("imageInput");
+            var imageContainer = document.getElementById("imageContainer");
+            var selectedImage = document.getElementById("selectedImage");
+            var predictionResults = document.getElementById("predictionResults");
+            var predictedClass = document.getElementById("predictedClass");
+            var predictedProb = document.getElementById("predictedProb");
+
+            // Clear previous results
+            predictionResults.style.display = "none";
+            predictedClass.innerText = "Predicted Class: ";
+            predictedProb.innerText = "Probability: ";
+
+            // Check if an image is selected
+            if (inputElement.files.length > 0) {
+                var file = inputElement.files[0];
+                var reader = new FileReader();
+
+                // Display the selected image
+                reader.onload = function (e) {
+                    imageContainer.style.display = "block";
+                    selectedImage.src = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+
+                // Send the image to the Flask backend for prediction
+                var formData = new FormData();
+                formData.append("image", file);
+
+                fetch("/classify_image", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display prediction results
+                    predictionResults.style.display = "block";
+                    predictedClass.innerText = "Predicted Class: " + (data.predicted_class === 0 ? "Non-paralyzed" : "Paralyzed");
+                    predictedProb.innerText = "Probability: " + (data.predicted_prob * 100).toFixed(2) + "%";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+            } else {
+                alert("Please select an image.");
+            }
+        }
+    </script>
+</body>
+</html>
