@@ -7,10 +7,7 @@ import numpy as np
 
 app = Flask(__name__)
 
-with open('api/my_model.tflite', 'rb') as f:
-    model_content = f.read()
 
-interpreter = tf.lite.Interpreter(model_content=model_content)
 
 # Use the interpreter to perform inference
 
@@ -21,6 +18,10 @@ def index():
 @app.route('/classify_image', methods=['POST'])
 def classify_image():
     try:
+        with open('api/my_model.tflite', 'rb') as f:
+            model_content = f.read()
+        
+        interpreter = tf.lite.Interpreter(model_content=model_content)
         image_file = request.files['image']
 
         # Read and preprocess the image
