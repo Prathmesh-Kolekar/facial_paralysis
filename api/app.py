@@ -1,9 +1,9 @@
 import traceback
 from flask import Flask, render_template, request, jsonify
-# import tensorflow as tf
+import tensorflow as tf
 import cv2
 import numpy as np
-import tflite
+# import tflite
 
 app = Flask(__name__)
 
