@@ -10,7 +10,7 @@ app = Flask(__name__)
 with open('api/my_model.tflite', 'rb') as f:
     model_content = f.read()
 
-interpreter = tflite.Interpreter(model_content=model_content)
+interpreter = tf.lite.Interpreter(model_content=model_content)
 
 # Use the interpreter to perform inference
 
