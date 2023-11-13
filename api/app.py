@@ -18,7 +18,7 @@ def index():
 @app.route('/classify_image', methods=['POST'])
 def classify_image():
     try:
-        with open('api/my_model.tflite', 'rb') as f:
+        with open('my_model.tflite', 'rb') as f:
             model_content = f.read()
         
         interpreter = tf.lite.Interpreter(model_content=model_content)
